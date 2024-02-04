@@ -15,8 +15,8 @@
       nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; });
     in {
       nixosModules = {
-        crowdsec = import ./modules/crowdsec self;
-        cs-firewall-bouncer = import ./modules/cs-firewall-bouncer self;
+        crowdsec = import ./modules/crowdsec;
+        crowdsec-firewall-bouncer = import ./modules/crowdsec-firewall-bouncer self;
       };
       packages = forAllSystems (system:
         let pkgs = nixpkgsFor.${system};

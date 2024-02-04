@@ -2,11 +2,11 @@ flake: { config, lib, pkgs, ... }:
 
 with lib;
 let
-  inherit (flake.packages.${pkgs.stdenv.hostPlatform.system}) cs-firewall-bouncer;
+  inherit (flake.packages.${pkgs.stdenv.hostPlatform.system}) crowdsec-firewall-bouncer;
 
   cfg = config.services.crowdsec-firewall-bouncer;
 in {
-  options.services.crowdsec-firewall-bouncer {
+  options.services.crowdsec-firewall-bouncer = {
     enable = mkEnableOption ''
       CrowdSec bouncer written in golang for firewalls.
     '';
@@ -25,7 +25,7 @@ in {
       description = ''
         The key used for connecting to crowdsec API.
       '';
-    }
+    };
 
     apiKeyFile = mkOption {
       type = with types; nullOr string;
@@ -34,7 +34,7 @@ in {
         The full filepath to the file that contains the crowdsec API key.
         The file should contain exactly one line, which is the key.
       '';
-    }
+    };
 
     package = mkOption {
       type = types.package;
@@ -52,7 +52,7 @@ in {
       pkgs.crowdsec
     ];
 
-    environment.etc."crowdsec/bouncers/crowdsec-firewall-bouncer.yaml" {
+    environment.etc."crowdsec/bouncers/crowdsec-firewall-bouncer.yaml" = {
       text = ''
         ## Config managed by NixOS
 
