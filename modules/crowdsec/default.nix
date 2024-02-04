@@ -25,6 +25,7 @@ in {
       mkdir -p /etc/crowdsec/collections
       mkdir -p /etc/crowdsec/appsec-configs
       mkdir -p /etc/crowdsec/appsec-rules
+      mkdir -p /etc/crowdsec/hub
     '';
 
     environment.etc = {
