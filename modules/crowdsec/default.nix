@@ -1,5 +1,6 @@
 { config, lib, pkgs, ... }:
 
+with lib;
 let
   cfg = config.services.crowdsec;
   store = pkgs.crowdsec;
