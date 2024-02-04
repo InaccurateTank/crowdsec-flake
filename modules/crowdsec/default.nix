@@ -16,7 +16,7 @@ in {
       crowdsec
     ];
 
-    system.activationScripts.makeCrowdsecDirs.text = lib.stringAfter [ "var" ] ''
+    system.activationScripts.makeCrowdsecDirs = lib.stringAfter [ "var" ] ''
       set -eu
 
       mkdir -p /var/lib/crowdsec/data
