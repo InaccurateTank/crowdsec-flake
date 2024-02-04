@@ -16,6 +16,17 @@ in {
       crowdsec
     ];
 
+    system.activationScripts.makeCrowdsecDirs.text = lib.stringAfter [ "var" ] ''
+      set -eu
+
+      mkdir -p /var/lib/crowdsec/data
+      mkdir -p /etc/crowdsec/scenarios
+      mkdir -p /etc/crowdsec/postoverflows
+      mkdir -p /etc/crowdsec/collections
+      mkdir -p /etc/crowdsec/appsec-configs
+      mkdir -p /etc/crowdsec/appsec-rules
+    '';
+
     environment.etc = {
       "crowdsec/config.yaml" = {
         source = "${store}/share/crowdsec/config/config.yaml";
@@ -45,7 +56,7 @@ in {
         source = "${store}/share/crowdsec/config/console.yaml";
         mode = "0644";
       };
-      "crowdsec/context.yaml" = {
+      "crowdsec/console/context.yaml" = {
         source = "${store}/share/crowdsec/config/context.yaml";
         mode = "0644";
       };
