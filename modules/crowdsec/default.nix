@@ -29,10 +29,6 @@ in {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [
-      cfg.package
-    ];
-
     system.activationScripts.crowdsecInit = lib.stringAfter [ "var" ] ''
       set -eu
 
@@ -46,8 +42,8 @@ in {
       mkdir -p /usr/local/lib/crowdsec/plugins
       mkdir -p /etc/crowdsec/notifications
 
-      cscli hub update
-      cscli machines add --force "$(cat /etc/machine-id)" -a -f "/etc/crowdsec/local_api_credentials.yaml"
+      ${cfg.package}/bin/cscli hub update
+      ${cfg.package}/bin/cscli machines add --force "$(cat /etc/machine-id)" -a -f "/etc/crowdsec/local_api_credentials.yaml"
     '';
 
     environment.etc = {
