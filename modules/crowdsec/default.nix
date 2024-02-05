@@ -3,11 +3,6 @@
 with lib;
 let
   cfg = config.services.crowdsec;
-
-  acquisFile = pkgs.writeText "acquis.yaml" ''
-    ${builtins.readFile "${cfg.package}/share/crowdsec/config/acquis.yaml"}
-    ---
-  '';
 in {
   options.services.crowdsec = {
     enable = mkEnableOption ''
@@ -60,7 +55,10 @@ in {
         mode = "0644";
       };
       "crowdsec/acquis.yaml" = {
-        text = acquisFile;
+        text = ''
+          ${builtins.readFile "${cfg.package}/share/crowdsec/config/acquis.yaml"}
+          ---
+        '';
         mode = "0644";
       };
       "crowdsec/profiles.yaml" = {
