@@ -9,10 +9,13 @@ in {
       CrowdSec agent.
     '';
 
-    # acquisEntries = mkOption {
-    #   types = with types; nullOr string;
-    #   default = null;
-    # };
+    acquisEntries = mkOption {
+      types = with types; listOf (submodule (import ./acquis-options.nix {inherit cfg;}));
+      default = {};
+      description = ''
+        A list of entries for acquis.yaml. Tells Crowdsec what files to monitor.
+      '';
+    };
 
     package = mkOption {
       type = types.package;
@@ -57,7 +60,10 @@ in {
       "crowdsec/acquis.yaml" = {
         text = ''
           ${builtins.readFile "${cfg.package}/share/crowdsec/config/acquis.yaml"}
-          ---
+          ${concatMapStrings (entry: "---\n" + generators.toYAML {
+            filenames = entry.filenames;
+            labels.type = entry.type;
+          }) cfg.acquisEntries}
         '';
         mode = "0644";
       };
