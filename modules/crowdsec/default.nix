@@ -60,7 +60,7 @@ in {
       "crowdsec/acquis.yaml" = {
         text = ''
           ${builtins.readFile "${cfg.package}/share/crowdsec/config/acquis.yaml"}
-          ${concatMapStrings (entry: "---\n" + generators.toYAML {
+          ${concatMapStrings (entry: "---\n" + generators.toYAML {} {
             filenames = entry.filenames;
             labels.type = entry.type;
           }) cfg.acquisEntries}
