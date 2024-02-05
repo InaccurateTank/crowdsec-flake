@@ -16,7 +16,7 @@ in {
       crowdsec
     ];
 
-    system.activationScripts.makeCrowdsecDirs = lib.stringAfter [ "var" ] ''
+    system.activationScripts.crowdsecInit = lib.stringAfter [ "var" ] ''
       set -eu
 
       mkdir -p /var/lib/crowdsec/data
@@ -26,6 +26,11 @@ in {
       mkdir -p /etc/crowdsec/appsec-configs
       mkdir -p /etc/crowdsec/appsec-rules
       mkdir -p /etc/crowdsec/hub
+      mkdir -p /usr/local/lib/crowdsec/plugins
+      mkdir -p /etc/crowdsec/notifications
+
+      cscli hub update
+      cscli machines add --force "$(cat /etc/machine-id)" -a -f "/etc/crowdsec/local_api_credentials.yaml"
     '';
 
     environment.etc = {
