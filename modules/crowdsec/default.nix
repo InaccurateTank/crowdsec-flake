@@ -28,7 +28,7 @@ in {
   };
 
   config = mkIf cfg.enable {
-    # Test, remove later
+    # Added purely for cscli. Collections should be managed through config, but cscli provides monitoring tools.
     environment.systemPackages = [cfg.package];
 
     system.activationScripts.crowdsecInit = lib.stringAfter [ "var" ] ''
@@ -44,9 +44,9 @@ in {
       mkdir -p /usr/local/lib/crowdsec/plugins
       mkdir -p /etc/crowdsec/notifications
 
-      ${cfg.package}/bin/cscli hub update > /dev/null
-      ${cfg.package}/bin/cscli collections install crowdsecurity/linux > /dev/null
-      ${cfg.package}/bin/cscli machines add --force "$(cat /etc/machine-id)" -a -f "/etc/crowdsec/local_api_credentials.yaml" > /dev/null
+      ${cfg.package}/bin/cscli hub update
+      ${cfg.package}/bin/cscli collections install crowdsecurity/linux
+      ${cfg.package}/bin/cscli machines add --force "$(cat /etc/machine-id)" -a -f "/etc/crowdsec/local_api_credentials.yaml"
     '';
 
     environment.etc = {
