@@ -90,10 +90,10 @@ in {
         mode = "0644";
       };
       "crowdsec/patterns".source = "${cfg.package}/share/crowdsec/config/patterns";
-      "crowdsec/local_api_credentials.yaml" = {
-        source = "${cfg.package}/share/crowdsec/config/local_api_credentials.yaml";
-        mode = "0600";
-      };
+      # "crowdsec/local_api_credentials.yaml" = {
+      #   source = "${cfg.package}/share/crowdsec/config/local_api_credentials.yaml";
+      #   mode = "0600";
+      # };
       "crowdsec/online_api_credentials.yaml" = {
         source = "${cfg.package}/share/crowdsec/config/online_api_credentials.yaml";
         mode = "0600";
