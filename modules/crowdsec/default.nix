@@ -10,7 +10,7 @@ in {
     '';
 
     acquisEntries = mkOption {
-      types = with types; listOf (submodule (import ./acquis-options.nix {inherit cfg;}));
+      type = with types; listOf (submodule (import ./acquis-options.nix {inherit cfg;}));
       default = {};
       description = ''
         A list of entries for acquis.yaml. Tells Crowdsec what files to monitor.
