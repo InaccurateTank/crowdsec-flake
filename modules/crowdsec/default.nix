@@ -27,6 +27,9 @@ in {
   };
 
   config = mkIf cfg.enable {
+    # Test, remove later
+    environment.systemPackages = [pkgs.crowdsec];
+
     system.activationScripts.crowdsecInit = lib.stringAfter [ "var" ] ''
       set -eu
 
@@ -60,10 +63,11 @@ in {
       "crowdsec/acquis.yaml" = {
         text = ''
           ${builtins.readFile "${cfg.package}/share/crowdsec/config/acquis.yaml"}
+          # Start of generated YAML
           ${concatMapStrings (entry: "---\n" + generators.toYAML {} {
             filenames = entry.filenames;
             labels.type = entry.type;
-          }) cfg.acquisEntries}
+          } + "\n") cfg.acquisEntries}
         '';
         mode = "0644";
       };
