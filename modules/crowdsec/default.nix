@@ -29,7 +29,7 @@ in {
 
   config = mkIf cfg.enable {
     # Test, remove later
-    environment.systemPackages = [pkgs.crowdsec];
+    environment.systemPackages = [cfg.package];
 
     system.activationScripts.crowdsecInit = lib.stringAfter [ "var" ] ''
       set -eu
