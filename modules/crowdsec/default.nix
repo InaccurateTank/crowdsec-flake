@@ -3,6 +3,7 @@
 with lib;
 let
   cfg = config.services.crowdsec;
+  toYAML = generators.toYAML {};
 in {
   options.services.crowdsec = {
     enable = mkEnableOption ''
@@ -44,6 +45,7 @@ in {
       mkdir -p /etc/crowdsec/notifications
 
       ${cfg.package}/bin/cscli hub update
+      ${cfg.package}/bin/cscli install crowdsecurity/linux
       ${cfg.package}/bin/cscli machines add --force "$(cat /etc/machine-id)" -a -f "/etc/crowdsec/local_api_credentials.yaml"
     '';
 
@@ -64,7 +66,7 @@ in {
         text = ''
           ${builtins.readFile "${cfg.package}/share/crowdsec/config/acquis.yaml"}
           # Start of generated YAML
-          ${concatMapStrings (entry: "---\n" + generators.toYAML {} {
+          ${concatMapStrings (entry: "---\n" + toYAML {
             filenames = entry.filenames;
             labels.type = entry.type;
           } + "\n") cfg.acquisEntries}
