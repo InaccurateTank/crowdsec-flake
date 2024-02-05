@@ -43,10 +43,6 @@ in {
       mkdir -p /etc/crowdsec/hub
       mkdir -p /usr/local/lib/crowdsec/plugins
       mkdir -p /etc/crowdsec/notifications
-
-      ${cfg.package}/bin/cscli hub update
-      ${cfg.package}/bin/cscli collections install crowdsecurity/linux
-      ${cfg.package}/bin/cscli machines add --force "$(cat /etc/machine-id)" -a -f "/etc/crowdsec/local_api_credentials.yaml"
     '';
 
     environment.etc = {
@@ -90,10 +86,10 @@ in {
         mode = "0644";
       };
       "crowdsec/patterns".source = "${cfg.package}/share/crowdsec/config/patterns";
-      # "crowdsec/local_api_credentials.yaml" = {
-      #   source = "${cfg.package}/share/crowdsec/config/local_api_credentials.yaml";
-      #   mode = "0600";
-      # };
+      "crowdsec/local_api_credentials.yaml" = {
+        source = "${cfg.package}/share/crowdsec/config/local_api_credentials.yaml";
+        mode = "0600";
+      };
       "crowdsec/online_api_credentials.yaml" = {
         source = "${cfg.package}/share/crowdsec/config/online_api_credentials.yaml";
         mode = "0600";
