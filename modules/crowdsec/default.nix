@@ -45,7 +45,7 @@ in {
       mkdir -p /etc/crowdsec/notifications
 
       ${cfg.package}/bin/cscli hub update
-      ${cfg.package}/bin/cscli install crowdsecurity/linux
+      ${cfg.package}/bin/cscli collections install crowdsecurity/linux
       ${cfg.package}/bin/cscli machines add --force "$(cat /etc/machine-id)" -a -f "/etc/crowdsec/local_api_credentials.yaml"
     '';
 
