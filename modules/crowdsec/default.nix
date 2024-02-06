@@ -88,7 +88,7 @@ in {
     };
 
     cfg.acquisEntries = [
-      (mkIf config.service.openssh.enable ''
+      (mkIf config.services.openssh.enable ''
         journalctl_filter:
         - _SYSTEMD_UNIT=ssh.service
         labels:
