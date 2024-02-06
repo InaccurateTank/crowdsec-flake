@@ -3,7 +3,6 @@
 with lib;
 let
   cfg = config.services.crowdsec;
-  toYAML = generators.toYAML {};
 in {
   options.services.crowdsec = {
     enable = mkEnableOption ''
@@ -87,6 +86,15 @@ in {
         mode = "0600";
       };
     };
+
+    cfg.acquisEntries = [
+      (mkIf config.service.openssh.enable ''
+        journalctl_filter:
+        - _SYSTEMD_UNIT=ssh.service
+        labels:
+          type: syslog
+      '')
+    ];
 
     systemd.services."crowdsec" = {
       description = "Crowdsec agent";
