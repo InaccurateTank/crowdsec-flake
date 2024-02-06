@@ -94,6 +94,12 @@ in {
         labels:
           type: syslog
       '')
+      (mkIf config.services.caddy.enable ''
+        filenames:
+         - /var/log/caddy/*.log
+        labels:
+          type: caddy
+      '')
     ];
 
     systemd.services."crowdsec" = {
