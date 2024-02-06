@@ -90,7 +90,7 @@ in {
     services.crowdsec.acquisEntries = [
       (mkIf config.services.openssh.enable ''
         journalctl_filter:
-        - _SYSTEMD_UNIT=sshd.service
+         - _SYSTEMD_UNIT=sshd.service
         labels:
           type: syslog
       '')
