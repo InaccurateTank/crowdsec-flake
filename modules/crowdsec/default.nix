@@ -87,7 +87,7 @@ in {
       };
     };
 
-    cfg.acquisEntries = [
+    services.crowdsec.acquisEntries = [
       (mkIf config.services.openssh.enable ''
         journalctl_filter:
         - _SYSTEMD_UNIT=ssh.service
