@@ -72,7 +72,7 @@ in {
     };
 
     services.crowdsec.acquisEntries = {
-      "sshd" = mkif config.services.openssh.enable ''
+      "sshd" = mkIf config.services.openssh.enable ''
         journalctl_filter:
          - _SYSTEMD_UNIT=sshd.service
         labels:
