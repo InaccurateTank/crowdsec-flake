@@ -56,7 +56,7 @@ in {
           ${concatStringsSep "---\n" (mapAttrsToList (name: value: ''
             # ${name}
             ${value}
-          ''))}
+          '') cfg.acquisEntries)}
         '';
         mode = "0644";
       };
