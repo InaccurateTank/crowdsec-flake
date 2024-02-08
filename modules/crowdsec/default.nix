@@ -94,7 +94,7 @@ in {
 
         if [ ! -e /etc/crowdsec/local_api_credentials.yaml ]; then
           install -v -m 600 -D "${cfg.package}/share/crowdsec/config/local_api_credentials.yaml" "/etc/crowdsec"
-          ${cfg.package}/bin/cscli machines add --force "$(cat /etc/machine-id)" -a
+          ${cfg.package}/bin/cscli machines add --force "$(cat /etc/machine-id)" -a -f "/etc/crowdsec/local_api_credentials.yaml"
         fi
 
         if [ ! -e /etc/crowdsec/online_api_credentials.yaml ]; then
