@@ -17,6 +17,14 @@ in {
       '';
     };
 
+    collections = mkOption {
+      type = with types; listOf str;
+      default = [];
+      description = ''
+        List of collections to automatically install. crowdsecurity/linux is included by default.
+      '';
+    };
+
     package = mkOption {
       type = types.package;
       default = pkgs.crowdsec;
@@ -72,6 +80,10 @@ in {
           type: caddy
       '';
     };
+    services.crowdsec.collections = [
+      "crowdsecurity/linux"
+      (mkIf config.services.caddy.enable "crowdsecurity/caddy")
+    ];
 
     systemd.services."crowdsec" = {
       description = "Crowdsec agent";
@@ -90,7 +102,11 @@ in {
         ${cfg.package}/bin/cscli hub update
         ${cfg.package}/bin/cscli hub upgrade
 
-        ${cfg.package}/bin/cscli collections install crowdsecurity/linux
+        ${concatMapStringsSep "\n" (collection: ''
+          if [ ${cfg.package}/bin/cscli collections list 2> /dev/null | grep -c ${collection}) -eq 0 ]; then
+            ${cfg.package}/bin/cscli collections install ${collection}
+          fi
+        '')}
 
         if [ ! -e /etc/crowdsec/local_api_credentials.yaml ]; then
           install -v -m 600 -D "${cfg.package}/share/crowdsec/config/local_api_credentials.yaml" "/etc/crowdsec"
