@@ -86,26 +86,26 @@ in {
         LC_ALL = "C";
         LANG = "C";
       };
+      preStart = ''
+        ${cfg.package}/bin/cscli hub update
+        ${cfg.package}/bin/cscli hub upgrade
+
+        ${cfg.package}/bin/cscli collections install crowdsecurity/linux
+
+        if [ ! -e /etc/crowdsec/local_api_credentials.yaml ]; then
+          install -v -m 600 -D "${cfg.package}/share/crowdsec/config/local_api_credentials.yaml" "/etc/crowdsec"
+          ${cfg.package}/bin/cscli machines add --force "$(cat /etc/machine-id)" -a
+        fi
+
+        if [ ! -e /etc/crowdsec/online_api_credentials.yaml ]; then
+          install -v -m 600 -D "${cfg.package}/share/crowdsec/config/online_api_credentials.yaml" "/etc/crowdsec"
+          ${cfg.package}/bin/cscli capi register --error
+        fi
+
+        ${cfg.package}/bin/crowdsec -c /etc/crowdsec/config.yaml -t -error
+      '';
       serviceConfig = {
         Type = "notify";
-        ExecStartPre = ''
-          ${cfg.package}/bin/cscli hub update
-          ${cfg.package}/bin/cscli hub upgrade
-
-          ${cfg.package}/bin/cscli collections install crowdsecurity/linux
-
-          if [ ! -e /etc/crowdsec/local_api_credentials.yaml ]; then
-            install -v -m 600 -D "${cfg.package}/share/crowdsec/config/local_api_credentials.yaml" "/etc/crowdsec"
-            ${cfg.package}/bin/cscli machines add --force "$(cat /etc/machine-id)" -a
-          fi
-
-          if [ ! -e /etc/crowdsec/online_api_credentials.yaml ]; then
-            install -v -m 600 -D "${cfg.package}/share/crowdsec/config/online_api_credentials.yaml" "/etc/crowdsec"
-            ${cfg.package}/bin/cscli capi register --error
-          fi
-
-          ${cfg.package}/bin/crowdsec -c /etc/crowdsec/config.yaml -t -error
-        '';
         ExecStart = "${cfg.package}/bin/crowdsec -c /etc/crowdsec/config.yaml";
         ExecReload = "/bin/kill -HUP $MAINPID";
         Restart = "always";
