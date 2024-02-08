@@ -102,11 +102,11 @@ in {
         ${cfg.package}/bin/cscli hub update
         ${cfg.package}/bin/cscli hub upgrade
 
-        ${concatMapStringsSep "\n" (map (collection: ''
+        ${concatMapStringsSep "\n" (collection: ''
           if [ ${cfg.package}/bin/cscli collections list 2> /dev/null | grep -c ${collection}) -eq 0 ]; then
             ${cfg.package}/bin/cscli collections install ${collection}
           fi
-        '') cfg.collections)}
+        '') cfg.collections}
 
         if [ ! -e /etc/crowdsec/local_api_credentials.yaml ]; then
           install -v -m 600 -D "${cfg.package}/share/crowdsec/config/local_api_credentials.yaml" "/etc/crowdsec"
