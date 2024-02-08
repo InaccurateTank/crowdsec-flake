@@ -103,7 +103,7 @@ in {
         ${cfg.package}/bin/cscli hub upgrade
 
         ${concatMapStringsSep "\n" (collection: ''
-          if [ ${cfg.package}/bin/cscli collections list 2> /dev/null | grep -c ${collection}) -eq 0 ]; then
+          if [ $(${cfg.package}/bin/cscli collections list 2> /dev/null | grep -c ${collection}) -eq 0 ]; then
             ${cfg.package}/bin/cscli collections install ${collection}
           fi
         '') cfg.collections}
