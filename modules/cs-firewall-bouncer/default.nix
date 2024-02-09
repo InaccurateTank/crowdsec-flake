@@ -131,10 +131,10 @@ in {
       ];
       preStart = let
         body = ''
-          APIKEY=${if (local && config.services.crowdsec.enable) then ''${config.services.crowdsec.package}/bin/cscli bouncers add -o raw "cs-firewall-bouncer-$(date +%s)"''
+          APIKEY=$(${if (local && config.services.crowdsec.enable) then ''${config.services.crowdsec.package}/bin/cscli bouncers add -o raw "cs-firewall-bouncer-$(date +%s)"''
           else if (apiKey != null) then ''${apiKey}''
           else ''cat ${apiKeyFile}''
-          }
+          })
           echo "api_key: $APIKEY" | install -D -m 0600 /dev/stdin "/etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml.local"
         '';
       in ''
