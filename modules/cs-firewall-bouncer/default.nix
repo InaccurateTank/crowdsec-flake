@@ -131,7 +131,7 @@ in {
       ];
       preStart = let
         body = ''
-          APIKEY=${if (local && config.services.crowdsec.enable) then ''${config.services.crowdsec.package}/bin/cscli -oraw bouncers add "cs-firewall-bouncer-$(date +%s)"''
+          APIKEY=${if (local && config.services.crowdsec.enable) then ''${config.services.crowdsec.package}/bin/cscli bouncers add -o raw "cs-firewall-bouncer-$(date +%s)"''
           else if (apiKey != null) then ''${apiKey}''
           else ''cat ${apiKeyFile}''
           }
