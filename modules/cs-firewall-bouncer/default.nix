@@ -56,6 +56,10 @@ in {
 
     networking.firewall.enable = true;
 
+    environment.systemPackages = [
+      pkgs.ipset
+    ];
+
     environment.etc."crowdsec/bouncers/crowdsec-firewall-bouncer.yaml".text = ''
       ## Config managed by NixOS
 
