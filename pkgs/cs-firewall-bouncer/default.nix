@@ -1,4 +1,4 @@
-{ lib, buildGoModule, fetchFromGitHub }:
+{ lib, buildGoModule, fetchFromGitHub, makeWrapper, ipset }:
 
 buildGoModule rec {
   pname = "cs-firewall-bouncer";
@@ -16,7 +16,17 @@ buildGoModule rec {
     hash = "sha256-Y1pCupCtYkOD6vKpcmM8nPlsGbO0kYhc3PC9YjJHeMw=";
   };
 
+  buildInputs = [
+    makeWrapper
+    ipset
+  ];
+
   vendorHash = "sha256-BA7OHvqIRck3LVgtx7z8qhgueaJ6DOMU8clvWKUCdqE=";
+
+  postInstall = ''
+    wrapProgram $out/bin/cs-firewall-bouncer \
+      --prefix PATH : ${lib.makeBinPath [ ipset ]}
+  '';
 
   CGO_ENABLED = 0;
   ldflags = [
