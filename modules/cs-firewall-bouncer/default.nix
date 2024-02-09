@@ -110,7 +110,6 @@ in {
         listen_addr: 127.0.0.1
         listen_port: 60601
     '';
-    mode = "0600";
 
     systemd.services."cs-firewall-bouncer" = {
       description = "The firewall bouncer for CrowdSec";
