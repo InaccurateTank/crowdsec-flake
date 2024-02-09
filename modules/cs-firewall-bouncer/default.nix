@@ -5,6 +5,7 @@ let
   inherit (flake.packages.${pkgs.stdenv.hostPlatform.system}) cs-firewall-bouncer;
 
   cfg = config.services.cs-firewall-bouncer;
+  local = (cfg.apiURL == "http://127.0.0.1:8080/");
 in {
   options.services.cs-firewall-bouncer = {
     enable = mkEnableOption ''
@@ -28,7 +29,7 @@ in {
     };
 
     apiKeyFile = mkOption {
-      type = with types; nullOr string;
+      type = with types; nullOr path;
       default = null;
       description = ''
         The full filepath to the file that contains the crowdsec API key.
@@ -46,6 +47,13 @@ in {
   };
 
   config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = (apiKey != null && apiKeyFile == null) || (apiKey == null && apiKeyFile != null);
+        message = "Either a key or a keyfile can be provided, but not both.";
+      }
+    ];
+
     networking.firewall.enable = true;
 
     environment.etc."crowdsec/bouncers/crowdsec-firewall-bouncer.yaml".text = ''
@@ -121,10 +129,26 @@ in {
         "nss-lookup.target"
         "crowdsec.service"
       ];
+      preStart = let
+        body = ''
+          APIKEY=${if (local && config.services.crowdsec.enable) then ''${cfg.package}/bin/cscli -oraw bouncers add "cs-firewall-bouncer-$(date +%s)"''
+          else if (apiKey != null) then ''${apiKey}''
+          else ''cat ${apiKeyFile}''
+          }
+          echo "api_key: $APIKEY" | install -D -m 0600 /dev/stdin "/etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml.local"
+        '';
+      in ''
+        ${if (local && local && config.services.crowdsec.enable) then ''
+          if [ ! -f /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml.local ]; then
+            ${body}
+          fi
+        ''
+        else body}
+        ${cfg.package}/bin/cs-firewall-bouncer -c /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml -t
+      '';
       serviceConfig = {
         Type = "notify";
         ExecStart = "${cfg.package}/bin/cs-firewall-bouncer -c /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml";
-        ExecStartPre = "${cfg.package}/bin/cs-firewall-bouncer -c /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml -t";
         Restart = "always";
         RestartSec = 10;
         LimitNOFILE = 65536;
