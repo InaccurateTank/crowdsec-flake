@@ -49,7 +49,7 @@ in {
   config = mkIf cfg.enable {
     assertions = [
       {
-        assertion = (cfg.apiKey != null && cfg.apiKeyFile == null) || (cfg.apiKey == null && cfg.apiKeyFile != null) || cfg.local;
+        assertion = (cfg.apiKey != null && cfg.apiKeyFile == null) || (cfg.apiKey == null && cfg.apiKeyFile != null) || local;
         message = "Either a key or a keyfile can be provided, but not both.";
       }
     ];
