@@ -11,7 +11,7 @@ in {
 
     acquisEntries = mkOption {
       type = with types; attrsOf lines;
-      default = [];
+      default = {};
       description = ''
         A list of entries for acquis.yaml. Tells Crowdsec what files to monitor.
       '';
@@ -22,6 +22,22 @@ in {
       default = [];
       description = ''
         List of collections to automatically install. crowdsecurity/linux is included by default.
+      '';
+    };
+
+    parsers = mkOption {
+      type = with types; listOf str;
+      default = [];
+      description = ''
+        List of parsers to automatically install.
+      '';
+    };
+
+    scenarios = mkOption {
+      type = with types; listOf str;
+      default = [];
+      description = ''
+        List of scenarios to automatically install.
       '';
     };
 
@@ -107,6 +123,16 @@ in {
             ${cfg.package}/bin/cscli collections install ${collection}
           fi
         '') cfg.collections}
+        ${concatMapStringsSep "\n" (parser: ''
+          if [ $(${cfg.package}/bin/cscli parsers list 2> /dev/null | grep -c ${parser}) -eq 0 ]; then
+            ${cfg.package}/bin/cscli parsers install ${parser}
+          fi
+        '') cfg.parsers}
+        ${concatMapStringsSep "\n" (scenario: ''
+          if [ $(${cfg.package}/bin/cscli scenarios list 2> /dev/null | grep -c ${scenario}) -eq 0 ]; then
+            ${cfg.package}/bin/cscli scenarios install ${scenario}
+          fi
+        '') cfg.scenarios}
 
         if [ ! -e /etc/crowdsec/local_api_credentials.yaml ]; then
           install -v -m 600 -D "${cfg.package}/share/crowdsec/config/local_api_credentials.yaml" "/etc/crowdsec"
