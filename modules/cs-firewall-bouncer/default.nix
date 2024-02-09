@@ -1,4 +1,9 @@
-flake: { config, lib, pkgs, ... }:
+flake:
+{ config
+, lib
+, pkgs
+, ...
+}:
 
 with lib;
 let

@@ -1,4 +1,11 @@
-{ lib, buildGoModule, fetchFromGitHub, makeWrapper, ipset, iptables }:
+{ lib
+, buildGoModule
+, fetchFromGitHub
+, makeWrapper
+, ipset
+, iptables
+, nftables
+}:
 
 buildGoModule rec {
   pname = "cs-firewall-bouncer";
@@ -19,6 +26,7 @@ buildGoModule rec {
   wrapPrograms = [
     ipset
     iptables
+    nftables
   ];
 
   nativeBuildInputs = [ makeWrapper ];
