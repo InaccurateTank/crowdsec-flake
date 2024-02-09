@@ -13,7 +13,7 @@ in {
     '';
 
     apiURL = mkOption {
-      type = types.string;
+      type = types.str;
       default = "http://127.0.0.1:8080/";
       description = ''
         URL of the Crowdsec API being used.
@@ -21,7 +21,7 @@ in {
     };
 
     apiKey = mkOption {
-      type = with types; nullOr string;
+      type = with types; nullOr (either str path);
       default = null;
       description = ''
         The key used for connecting to crowdsec API.
@@ -29,7 +29,7 @@ in {
     };
 
     apiKeyFile = mkOption {
-      type = with types; nullOr path;
+      type = with types; nullOr (either str path);
       default = null;
       description = ''
         The full filepath to the file that contains the crowdsec API key.
@@ -131,7 +131,7 @@ in {
       ];
       preStart = let
         body = ''
-          APIKEY=${if (local && config.services.crowdsec.enable) then ''${cfg.package}/bin/cscli -oraw bouncers add "cs-firewall-bouncer-$(date +%s)"''
+          APIKEY=${if (local && config.services.crowdsec.enable) then ''${config.services.crowdsec.package}/bin/cscli -oraw bouncers add "cs-firewall-bouncer-$(date +%s)"''
           else if (apiKey != null) then ''${apiKey}''
           else ''cat ${apiKeyFile}''
           }
