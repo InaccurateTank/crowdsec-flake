@@ -26,7 +26,7 @@ in {
     };
 
     apiKey = mkOption {
-      type = with types; nullOr (either str path);
+      type = with types; nullOr str;
       default = null;
       description = ''
         The key used for connecting to crowdsec API.
@@ -55,7 +55,7 @@ in {
     assertions = [
       {
         assertion = (cfg.apiKey != null && cfg.apiKeyFile == null) || (cfg.apiKey == null && cfg.apiKeyFile != null) || local;
-        message = "Either a key or a keyfile can be provided, but not both.";
+        message = "Either a key or a keyfile must be provided if the api isn't local, but not both.";
       }
     ];
 
@@ -135,17 +135,13 @@ in {
         "crowdsec.service"
       ];
       preStart = let
-        body = ''
-          APIKEY=$(${if (local && config.services.crowdsec.enable) then ''${config.services.crowdsec.package}/bin/cscli bouncers add -o raw "cs-firewall-bouncer-$(date +%s)"''
-          else if (apiKey != null) then ''${apiKey}''
-          else ''cat ${apiKeyFile}''
-          })
-          echo "api_key: $APIKEY" | install -D -m 0600 /dev/stdin "/etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml.local"
-        '';
+        keyFinal = if (local && config.services.crowdsec.enable) then ''$(${config.services.crowdsec.package}/bin/cscli bouncers add -o raw "cs-firewall-bouncer-$(date +%s)")''
+          else if (apiKey != null) then apiKey
+          else "$(cat ${apiKeyFile})";
       in ''
         ${if (local && local && config.services.crowdsec.enable) then ''
           if [ ! -f /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml.local ]; then
-            ${body}
+            echo "api_key: ${keyFinal}" | install -D -m 0600 /dev/stdin "/etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml.local"
           fi
         ''
         else body}
